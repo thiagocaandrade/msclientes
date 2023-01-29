@@ -12,15 +12,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository;
+    private final ClienteRepository repository;
 
     @Transactional
     public Cliente save(Cliente cliente){
-        return clienteRepository.save(cliente);
+        return repository.save(cliente);
     }
 
-    public Optional<Cliente> getByCpf(String cpf){
-        return clienteRepository.findByCpf(cpf);
+    public Optional<Cliente> getByCPF(String cpf){
+        return repository.findByCpf(cpf);
     }
-
 }

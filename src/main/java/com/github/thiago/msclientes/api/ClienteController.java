@@ -1,6 +1,5 @@
 package com.github.thiago.msclientes.api;
 
-import com.github.thiago.msclientes.domain.Cliente;
 import com.github.thiago.msclientes.domain.dto.ClienteSaveRequest;
 import com.github.thiago.msclientes.service.ClienteService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("clientes")
@@ -18,36 +16,34 @@ import java.util.Optional;
 @Slf4j
 public class ClienteController {
 
-    private final ClienteService clienteService;
+    private final ClienteService service;
 
-    @GetMapping("/status")
+    @GetMapping
     public String status(){
-        log.info("Obtendo status do microservice de clientes");
-        return "Sucesso";
+        log.info("Obtendo o status do microservice de clientes");
+        return "ok";
     }
-
 
     @PostMapping
     public ResponseEntity save(@RequestBody ClienteSaveRequest request){
-        Cliente cliente = request.toModel();
-        clienteService.save(cliente);
+        var cliente = request.toModel();
+        service.save(cliente);
         URI headerLocation = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .query("cpf={cpf}")
                 .buildAndExpand(cliente.getCpf())
                 .toUri();
-
         return ResponseEntity.created(headerLocation).build();
-
     }
 
-    @GetMapping
+    @GetMapping(params = "cpf")
     public ResponseEntity dadosCliente(@RequestParam("cpf") String cpf){
-        Optional<Cliente> cliente = clienteService.getByCpf(cpf);
-
-        if (cliente.isEmpty()){
+        var cliente = service.getByCPF(cpf);
+        if(cliente.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.of(cliente);
+        return ResponseEntity.ok(cliente);
     }
 }
+
+
